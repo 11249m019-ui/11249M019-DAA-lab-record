@@ -1,0 +1,77 @@
+#include <stdio.h>
+
+int main()
+{
+    int w[10], p[10], n, i, j, cap, temp_w, temp_p;
+    float up[10], temp, profit = 0.0;
+
+    printf("Enter the number of items: ");
+    scanf("%d", &n);
+
+    if (n <= 0 || n > 10)
+    {
+        printf("Invalid input\n");
+        return 0;
+    }
+
+    printf("Enter the weights of items:\n");
+    for (i = 0; i < n; i++)
+        scanf("%d", &w[i]);
+
+    printf("Enter the profits of items:\n");
+    for (i = 0; i < n; i++)
+        scanf("%d", &p[i]);
+
+    printf("Enter the capacity of knapsack: ");
+    scanf("%d", &cap);
+
+    // Calculate unit profit (profit/weight)
+    for (i = 0; i < n; i++)
+        up[i] = (float)p[i] / w[i];
+
+    // Sort items by unit profit (descending)
+    for (i = 0; i < n - 1; i++)
+    {
+        for (j = i + 1; j < n; j++)
+        {
+            if (up[i] < up[j])
+            {
+                // swap unit profit
+                temp = up[i];
+                up[i] = up[j];
+                up[j] = temp;
+
+                // swap weights
+                temp_w = w[i];
+                w[i] = w[j];
+                w[j] = temp_w;
+
+                // swap profits
+                temp_p = p[i];
+                p[i] = p[j];
+                p[j] = temp_p;
+            }
+        }
+    }
+
+    // Apply fractional knapsack
+    for (i = 0; i < n; i++)
+    {
+        if (w[i] <= cap)
+        {
+            cap -= w[i];
+            profit += p[i];
+            printf("Item %d taken completely\n", i + 1);
+        }
+        else
+        {
+            profit += up[i] * cap;
+            printf("Item %d taken partially\n", i + 1);
+            break;
+        }
+    }
+
+    printf("Maximum profit = %.2f\n", profit);
+
+    return 0;
+}
