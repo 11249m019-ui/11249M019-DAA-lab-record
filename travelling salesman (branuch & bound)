@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <limits.h>
+
+int n, cost[10][10], visited[10];
+
+// Function to find minimum cost path
+int tsp(int city, int count)
+{
+    int i, min_cost = INT_MAX, temp;
+
+    // If all cities are visited, return to starting city
+    if (count == n)
+        return cost[city][0];
+
+    for (i = 0; i < n; i++)
+    {
+        if (!visited[i] && cost[city][i] != 0)
+        {
+            visited[i] = 1;
+
+            temp = cost[city][i] + tsp(i, count + 1);
+
+            if (temp < min_cost)
+                min_cost = temp;
+
+            visited[i] = 0; // backtrack
+        }
+    }
+
+    return min_cost;
+}
+
+int main()
+{
+    int i, j, result;
+
+    printf("Enter number of cities: ");
+    scanf("%d", &n);
+
+    if (n <= 0 || n > 10)
+    {
+        printf("Invalid input\n");
+        return 0;
+    }
+
+    printf("Enter cost matrix:\n");
+    for (i = 0; i < n; i++)
+    {
+        for (j = 0; j < n; j++)
+        {
+            scanf("%d", &cost[i][j]);
+        }
+    }
+
+    // Initialize visited array
+    for (i = 0; i < n; i++)
+        visited[i] = 0;
+
+    visited[0] = 1; // start from city 0
+
+    result = tsp(0, 1);
+
+    printf("Minimum travelling cost = %d\n", result);
+
+    return 0;
+}
