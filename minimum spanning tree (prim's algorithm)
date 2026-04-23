@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <limits.h>
+
+int main()
+{
+    int n, i, j, u, v, min, total_cost = 0;
+    int cost[10][10], visited[10] = {0};
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    if (n <= 0 || n > 10)
+    {
+        printf("Invalid input\n");
+        return 0;
+    }
+
+    printf("Enter adjacency matrix:\n");
+    for (i = 0; i < n; i++)
+    {
+        for (j = 0; j < n; j++)
+        {
+            scanf("%d", &cost[i][j]);
+
+            // Replace 0 (no edge) with large value
+            if (cost[i][j] == 0)
+                cost[i][j] = INT_MAX;
+        }
+    }
+
+    visited[0] = 1; // start from vertex 0
+
+    printf("Edges in MST:\n");
+
+    for (i = 0; i < n - 1; i++)
+    {
+        min = INT_MAX;
+
+        for (u = 0; u < n; u++)
+        {
+            if (visited[u])
+            {
+                for (v = 0; v < n; v++)
+                {
+                    if (!visited[v] && cost[u][v] < min)
+                    {
+                        min = cost[u][v];
+                        j = u;   // store source
+                        v = v;   // destination (kept same)
+                    }
+                }
+            }
+        }
+
+        printf("%d -> %d  cost = %d\n", j, v, min);
+
+        total_cost += min;
+        visited[v] = 1;
+    }
+
+    printf("Total cost of MST = %d\n", total_cost);
+
+    return 0;
+}
