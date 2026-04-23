@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <limits.h>
+
+#define MAX 10
+
+int n;
+int capacity[MAX][MAX], residual[MAX][MAX];
+int visited[MAX], parent[MAX];
+
+// BFS to find augmenting path
+int bfs(int s, int t)
+{
+    int queue[MAX], front = 0, rear = 0;
+    int i;
+
+    for (i = 0; i < n; i++)
+    {
+        visited[i] = 0;
+        parent[i] = -1;
+    }
+
+    queue[rear++] = s;
+    visited[s] = 1;
+
+    while (front < rear)
+    {
+        int u = queue[front++];
+
+        for (i = 0; i < n; i++)
+        {
+            if (!visited[i] && residual[u][i] > 0)
+            {
+                queue[rear++] = i;
+                parent[i] = u;
+                visited[i] = 1;
+
+                if (i == t)
+                    return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+int main()
+{
+    int i, j, s, t, max_flow = 0;
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    if (n <= 0 || n > MAX)
+    {
+        printf("Invalid input\n");
+        return 0;
+    }
+
+    printf("Enter capacity matrix:\n");
+    for (i = 0; i < n; i++)
+    {
+        for (j = 0; j < n; j++)
+        {
+            scanf("%d", &capacity[i][j]);
+            residual[i][j] = capacity[i][j]; // initialize residual graph
+        }
+    }
+
+    printf("Enter source and sink: ");
+    scanf("%d %d", &s, &t);
+
+    // Ford-Fulkerson using BFS
+    while (bfs(s, t))
+    {
+        int path_flow = INT_MAX;
+
+        // Find minimum capacity in path
+        for (j = t; j != s; j = parent[j])
+        {
+            i = parent[j];
+            if (residual[i][j] < path_flow)
+                path_flow = residual[i][j];
+        }
+
+        // Update residual capacities
+        for (j = t; j != s; j = parent[j])
+        {
+            i = parent[j];
+            residual[i][j] -= path_flow;
+            residual[j][i] += path_flow;
+        }
+
+        max_flow += path_flow;
+    }
+
+    printf("Maximum flow = %d\n", max_flow);
+
+    return 0;
+}
