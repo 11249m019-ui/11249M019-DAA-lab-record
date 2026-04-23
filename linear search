@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void ls(int a[], int begin, int stop, int search)
+{
+    if (begin > stop)
+    {
+        printf("Element not found\n");
+        return;
+    }
+    else if (a[begin] == search)
+    {
+        printf("Element found at position %d\n", begin + 1);
+        return;
+    }
+    else
+    {
+        ls(a, begin + 1, stop, search);
+    }
+}
+
+int main()
+{
+    int a[10000], n = 10000, key, i;
+    clock_t start, end;
+    double cpu_time;
+
+    // Generate random array
+    for (i = 0; i < n; i++)
+        a[i] = rand() % 1000;
+
+    key = rand() % 1000;
+
+    printf("Searching for element: %d\n", key);
+
+    start = clock();
+
+    ls(a, 0, n - 1, key);
+
+    end = clock();
+
+    cpu_time = ((double)(end - start)) / CLOCKS_PER_SEC;
+
+    printf("Total time taken for execution = %f seconds\n", cpu_time);
+
+    return 0;
+}
